@@ -51,13 +51,16 @@ You can try this out by expanding the “DNS Query” section on the kuard serve
 The full DNS name here is alpaca-prod.default.svc.cluster.local. . Let’s break this down:
 
 alpaca-prod
- - The name of the service in question.
+The name of the service in question.
+
 default
- - The namespace that this service is in.
+The namespace that this service is in.
+
 svc
- - Recognizing that this is a service. This allows Kubernetes to expose other types of things as DNS in the future.
+Recognizing that this is a service. This allows Kubernetes to expose other types of things as DNS in the future.
+
 cluster.local.
- - The base domain name for the cluster. This is the default and what you will see for most clusters. Administrators may change this to allow unique DNS names across multiple clusters.
+The base domain name for the cluster. This is the default and what you will see for most clusters. Administrators may change this to allow unique DNS names across multiple clusters.
 
 
 ## Readiness Checks
