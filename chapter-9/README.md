@@ -19,3 +19,12 @@ instance, with the previous examples, the reconciliation loop would create a new
 replicas.
 
 Reconciliation loop for ReplicaSets is a single loop, yet it handles user actions to scale up or scale down the ReplicaSet as well as node failures or nodes rejoining the cluster after being absent.
+
+## Relating Pods and ReplicaSets
+
+The relationship between ReplicaSets and Pods is loosely coupled. Though ReplicaSets create and manage Pods, they do not own the Pods they create.
+
+Replica‐Sets use label queries to identify the set of Pods they should be managing. They then use the exact same Pod API that you used directly in Chapter 5 to create the Pods that
+they are managing
+
+ReplicaSets that create multiple Pods and the services that load-balance to those Pods are also totally separate, decoupled API objects.
