@@ -32,3 +32,8 @@ ReplicaSets that create multiple Pods and the services that load-balance to thos
 ## Adopting Existing Containers
 
 ReplicaSets are decoupled from the Pods they manage, you can simply create a ReplicaSet that will “adopt” the existing Pod, and scale out additional copies of those containers. In this way, you can seamlessly move from a single imperative Pod to a replicated set of Pods managed by a ReplicaSet.
+
+## Quarantining Containers
+
+In these situations, while it would work to simply kill the Pod, that would leave your developers with only logs to debug the problem. Instead, you can modify the set of labels on the sick Pod.
+
