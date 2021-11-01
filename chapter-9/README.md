@@ -120,4 +120,61 @@ use the --selector flag or the shorthand -l
 kubectl get pods -l app=kuard
 ```
 
-This is exactly the same query that the ReplicaSet executes to determine the current number of Pods
+This is exactly the same query that the ReplicaSet executes to determine the current number of Pods.
+
+## Scaling ReplicaSets
+
+ReplicaSets are scaled up or down by updating the spec.replicas key on the ReplicaSet object stored in Kubernetes
+
+### Imperative Scaling with kubectl scale
+The easiest way to achieve this is using the scale command in kubectl
+
+```bash
+kubectl scale replicasets kuard --replicas=4
+```
+
+While such imperative commands are useful for demonstrations and quick reactions to emergency situations (e.g., in response to a sudden increase in load), it is important to also update any text-file configurations to match the number of replicas that you set via the imperative scale command.
+
+### Declaratively Scaling with kubectl apply
+To scale the kuard ReplicaSet, edit the kuard-rs.yaml configuration file and set the replicas count to 3
+
+```yaml
+spec:
+ replicas: 3
+```
+
+you can then use the kubectl apply command to submit the updated kuard ReplicaSet to the API server
+
+```bash
+kubectl apply -f kuard-rs.yaml
+```
+
+### Autoscaling a ReplicaSet
+
+While there will be times when you want to have explicit control over the number of replicas in a ReplicaSet, often you simply want to have “enough” replicas. The definition varies depending on the needs of the containers in the ReplicaSet.
+
+### Autoscaling based on CPU
+
+Scaling based on CPU usage is the most common use case for Pod autoscaling. Generally it is most useful for request-based systems that consume CPU proportionally to the number of requests they are receiving, while using a relatively static amount of memory.
+
+To scale a ReplicaSet, you can run a command like the following
+
+```bash 
+kubectl autoscale rs kuard --min=2 --max=5 --cpu-percent=80
+```
+
+This command creates an autoscaler that scales between two and five replicas with a CPU threshold of 80%. 
+
+```bash 
+kubectl get hpa
+```
+
+### Deleting ReplicaSets
+
+When a ReplicaSet is no longer required it can be deleted using the kubectl delete command. By default, this also deletes the Pods that are managed by the ReplicaSet
+
+```bash
+kubectl delete rs kuard
+```
+
+Running the kubectl get pods command shows that all the kuard Pods created by the kuard ReplicaSet have also been deleted
