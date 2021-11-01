@@ -177,4 +177,8 @@ When a ReplicaSet is no longer required it can be deleted using the kubectl dele
 kubectl delete rs kuard
 ```
 
-Running the kubectl get pods command shows that all the kuard Pods created by the kuard ReplicaSet have also been deleted
+Running the kubectl get pods command shows that all the kuard Pods created by the kuard ReplicaSet have also been deleted. If you don’t want to delete the Pods that are being managed by the ReplicaSet, you can set the --cascade flag to false to ensure only the ReplicaSet object is deleted and not the Pods
+
+```bash
+kubectl delete rs kuard --cascade=false
+```
