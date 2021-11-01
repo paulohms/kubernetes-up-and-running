@@ -41,3 +41,45 @@ In these situations, while it would work to simply kill the Pod, that would leav
 
 ReplicaSets are designed to represent a single, scalable microservice inside your architecture. The key characteristic of ReplicaSets is that every Pod that is created by the ReplicaSet controller is entirely homogeneous. ReplicaSets are designed for stateless (or nearly stateless) services. The elements created by the ReplicaSet are interchangeable; 
 when a ReplicaSet is scaled down, an arbitrary Pod is selected for deletion. Your application’s behavior shouldn’t change because of such a scale-down operation
+
+## ReplicaSet Spec
+
+ReplicaSets are defined using a specification. All ReplicaSets must have a unique name (defined using the metadata.name field), a spec section that describes the number of Pods (replicas) that should be running clusterwide at any given time, and a Pod template that describes the Pod to be created when the defined number of replicas is not met.
+
+```yml
+    apiVersion: extensions/v1beta1
+    kind: ReplicaSet
+    metadata:
+        name: kuard
+    spec:
+        replicas: 1
+        template:
+            metadata:
+                labels:
+                    app: kuard
+                    version: "2"
+            spec:
+                containers:
+                    - name: kuard
+                    image: "gcr.io/kuar-demo/kuard-amd64:green"
+ ```
+
+## Pod Templates
+when the number of Pods in the current state is less than the number of Pods in the desired state, the ReplicaSet controller will create new Pods. The Pods are created using a Pod template that is contained in the ReplicaSet specification. The Pods are created in exactly the same manner as when you created a Pod from a YAML file.
+
+```yml
+template:
+    metadata:
+        labels:
+            app: helloworld
+            version: v1
+    spec:
+        containers:
+            - name: helloworld
+            image: kelseyhightower/helloworld:v1
+            ports:
+            - containerPort: 80
+```
+
+## Labels
+ReplicaSets monitor cluster state using a set of Pod labels. Labels are used to filter Pod listings and track Pods running within a cluster
