@@ -83,3 +83,41 @@ template:
 
 ## Labels
 ReplicaSets monitor cluster state using a set of Pod labels. Labels are used to filter Pod listings and track Pods running within a cluster
+
+## Creating a ReplicaSet
+```bash
+kubectl apply -f kuard-rs.yaml
+```
+
+Once the kuard ReplicaSet has been accepted, the ReplicaSet controller will detect that there are no kuard Pods running that match the desired state, and a new kuard Pod will be created based on the contents of the Pod template
+
+```bash
+kubectl get pods
+```
+
+## Inspecting a ReplicaSet
+If you are interested in further details about a ReplicaSet, the describe command will provide much more information about its state.
+
+```bash
+kubectl describe rs kuard
+```
+
+You can see the label selector for the ReplicaSet, as well as the state of all of the replicas managed by the ReplicaSet.
+
+## Finding a ReplicaSet from a Pod
+You may wonder if a Pod is being managed by a ReplicaSet. To enable this kind of discovery, the ReplicaSet controller adds an annotation to every Pod that it creates. The key for the annotation is ownerReferences. If you run the following, look for the ownerReferences entry in the annotations section
+
+```bash
+kubectl get pods <pod-name> -o yaml
+```
+
+## Finding a Set of Pods for a ReplicaSet
+
+You can also determine the set of Pods managed by a ReplicaSet. First, you can get the set of labels using the kubectl describe command. To find the Pods that match this selector,
+use the --selector flag or the shorthand -l
+
+```bash 
+kubectl get pods -l app=kuard
+```
+
+This is exactly the same query that the ReplicaSet executes to determine the current number of Pods
