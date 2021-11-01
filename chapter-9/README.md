@@ -28,3 +28,7 @@ Replica‐Sets use label queries to identify the set of Pods they should be mana
 they are managing
 
 ReplicaSets that create multiple Pods and the services that load-balance to those Pods are also totally separate, decoupled API objects.
+
+## Adopting Existing Containers
+
+ReplicaSets are decoupled from the Pods they manage, you can simply create a ReplicaSet that will “adopt” the existing Pod, and scale out additional copies of those containers. In this way, you can seamlessly move from a single imperative Pod to a replicated set of Pods managed by a ReplicaSet.
