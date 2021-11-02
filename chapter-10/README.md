@@ -5,3 +5,31 @@ Additionally, deployments enable you to easily move from one version of your cod
 stops the deployment if too many failures occur.
 
 The actual mechanics of the software rollout performed by a deployment is controlled by a deployment controller that runs in the Kubernetes cluster itself. This makes it easy to integrate deployments with numerous continuous delivery tools and services. Further, running server-side makes it safe to perform a rollout from places with poor or intermittent internet connectivity. Imagine rolling out a new version of your software from your phone while riding on the subway. Deployments make this possible and safe!
+
+## Your First Deployment
+
+A deployment can be represented as a declarative YAML object that provides the details about what you want to run. In the following case, the deployment is requesting a single instance of the kuard application
+```yaml
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+    name: kuard
+spec:
+    selector:
+        matchLabels:
+            run: kuard
+    replicas: 1
+    template:
+        metadata:
+            labels:
+                run: kuard
+        spec:
+            containers:
+            - name: kuard
+                image: gcr.io/kuar-demo/kuard-amd64:blue 
+```
+
+```bash 
+kubectl create -f kuard-deployment.yaml
+```
+
