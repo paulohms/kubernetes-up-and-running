@@ -33,3 +33,27 @@ spec:
 kubectl create -f kuard-deployment.yaml
 ```
 
+## Deployment Internals
+
+Deployments manage ReplicaSets. As with all relationships in Kubernetes, this relationship is defined by labels and a label selector. You can see the label selector by looking at the Deployment object.
+
+```bash 
+kubectl get deployments kuard -o yaml
+```
+
+From this you can see that the deployment is managing a ReplicaSet with the label run=kuard.
+
+```bash 
+kubectl get replicasets --selector=run=kuard
+```
+
+Now let’s see the relationship between a deployment and a ReplicaSet in action. We can resize the deployment using the imperative scale command
+
+```bash 
+kubectl scale deployments kuard --replicas=2
+```
+
+Kubernetes is an online, self-healing system. The top-level Deployment object is managing this ReplicaSet. If you ever want to manage that ReplicaSet directly, you need to delete the deployment (remember to set --cascade to false, or else it will delete the ReplicaSet and Pods as well!)
+
+
+
