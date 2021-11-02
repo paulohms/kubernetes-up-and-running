@@ -55,5 +55,25 @@ kubectl scale deployments kuard --replicas=2
 
 Kubernetes is an online, self-healing system. The top-level Deployment object is managing this ReplicaSet. If you ever want to manage that ReplicaSet directly, you need to delete the deployment (remember to set --cascade to false, or else it will delete the ReplicaSet and Pods as well!)
 
+## Creating Deployments
 
+As a starting point, download this deployment into a YAML file
+    
+```bash 
+kubectl get deployments kuard -o yaml > kuard-deployment.yaml
+```
+```bash 
+kubectl replace -f kuard-deployment.yaml --save-config
+```
 
+The deployment spec has a very similar structure to the ReplicaSet spec. There is a Pod template, which contains a number of containers that are created for each replica managed by the deployment. In addition to the Pod specification, there is also a strategy object
+
+```yaml 
+strategy:
+    rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 1
+    type: RollingUpdate
+ ```
+
+The strategy object dictates the different ways in which a rollout of new software can proceed. There are two different strategies supported by deployments: Recreate and RollingUpdate.
