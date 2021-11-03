@@ -204,3 +204,65 @@ spec:
  # releases as we don't expect to roll back beyond that.
  revisionHistoryLimit: 14
  ```
+
+## Deployment Strategies
+
+### Recreate Strategy
+
+It simply updates the ReplicaSet it manages to use the new image and terminates all of the Pods associated with the deployment. The ReplicaSet notices that it no longer has any replicas, and re-creates all Pods using the new image. Once the Pods are re-created, they are running the new version.
+
+While this strategy is fast and simple, it has one major drawback—it is potentially catastrophic, and will almost certainly result in some site downtime.
+
+### RollingUpdate Strategy
+
+Using RollingUpdate, you can roll out a new version of your service while it is still receiving user traffic, without any downtime. The RollingUpdate strategy works by updating a few Pods at a time, moving incrementally until all of the Pods are running the new version of your software.
+
+### Managing multiple versions of your service
+
+Importantly, this means that for a period of time, both the new and the old version of your service will be receiving requests and serving traffic.
+
+### Configuring a rolling update
+
+The maxUnavailable parameter sets the maximum number of Pods that can be unavailable during a rolling update. It can either be set to an absolute number (e.g., 3, meaning a maximum of three Pods can be unavailable) or to a percentage (e.g., 20%, meaning a maximum of 20% of the desired number of replicas can be unavailable).
+
+At its core, the maxUnavailable parameter helps tune how quickly a rolling update proceeds. For example, if you set maxUnavailable to 50%, then the rolling update will immediately scale the old ReplicaSet down to 50% of its original size. If you have four replicas, it will scale it down to two replicas. The rolling update will then replace the removed Pods by scaling the new ReplicaSet up to two replicas, for a total of four rep‐ licas (two old, two new). It will then scale the old ReplicaSet down to zero replicas, for a total size of two new replicas. Finally, it will scale the new ReplicaSet up to four rep‐ licas, completing the rollout. Thus, with maxUnavailable set to 50%, our rollout com‐ pletes in four steps, but with only 50% of our service capacity at times.
+
+However, there are situations where you don’t want to fall below 100% capacity, but you are willing to temporarily use additional resources in order to perform a rollout. In these situations, you can set the maxUnavailable parameter to 0%, and instead con‐ trol the rollout using the maxSurge parameter. Like maxUnavailable, maxSurge can be specified either as a specific number or a percentage
+
+The maxSurge parameter controls how many extra resources can be created to ach‐ ieve a rollout. To illustrate how this works, imagine we have a service with 10 replicas. We set maxUnavailable to 0 and maxSurge to 20%. The first thing the rollout will do is scale the new ReplicaSet up to 2 replicas, for a total of 12 (120%) in the service. It will then scale the old ReplicaSet down to 8 replicas, for a total of 10 (8 old, 2 new) in the service. This process proceeds until the rollout is complete. At any time, the capacity of the service is guaranteed to be at least 100% and the maximum extra resources used for the rollout are limited to an additional 20% of all resources
+
+### Slowing Rollouts to Ensure Service Health
+
+The purpose of a staged rollout is to ensure that the rollout results in a healthy, stable service running the new software version. To do this, the deployment controller always waits until a Pod reports that it is ready before moving on to updating the next Pod.
+
+Sometimes, however, simply noticing that a Pod has become ready doesn’t give you sufficient confidence that the Pod actually is behaving correctly. Some error condi‐ tions only occur after a period of time.
+
+For deployments, this time to wait is defined by the minReadySeconds parameter
+
+```yaml 
+spec:
+      minReadySeconds: 60
+```
+
+In addition to waiting a period of time for a Pod to become healthy, you also want to set a timeout that limits how long the system will wait. Suppose, for example, the new version of your service has a bug and immediately deadlocks. It will never become ready, and in the absence of a timeout, the deployment controller will stall your roll- out forever.
+
+The correct behavior in such a situation is to time out the rollout. This in turn marks the rollout as failed. This failure status can be used to trigger alerting that can indicate to an operator that there is a problem with the rollout.
+
+To set the timeout period, the deployment parameter progressDeadlineSeconds is used
+
+```yaml 
+spec:
+      progressDeadlineSeconds: 600
+```
+
+It is important to note that this timeout is given in terms of deployment progress, not the overall length of a deployment. In this context, progress is defined as any time the deployment creates or deletes a Pod. When that happens, the timeout clock is reset to zero.
+
+![](k8s-deploy-lifecycle.png)
+
+## Deleting a Deployment
+
+```bash 
+kubectl delete deployments kuard
+```
+
+In either case, by default, deleting a deployment deletes the entire service. It will delete not just the deployment, but also any ReplicaSets being managed by the deployment, as well as any Pods being managed by the ReplicaSets. As with Replica‐ Sets, if this is not the desired behavior, you can use the --cascade=false flag to exclusively delete the Deployment object.
