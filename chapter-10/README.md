@@ -158,3 +158,49 @@ If, after investigation, you believe the rollout can safely proceed, you can use
 kubectl rollout resume deployments kuard
 deployment "kuard" resumed
 ```
+
+### Rollout History
+
+You can see the deployment history by running
+
+```bash
+kubectl rollout history deployment kuard
+```
+
+```bash 
+kubectl rollout history deployment kuard --revision=2
+```
+
+Update the kuard version back to blue by modifying the container version number and updating the change-cause annotation. Apply it with kubectl apply
+
+```bash
+ubectl rollout history deployment kuard
+```
+
+Let’s say there is an issue with the latest release and you want to roll back while you investigate. You can simply undo the last rollout
+
+```bash
+kubectl rollout undo deployments kuard
+deployment "kuard" rolled back
+```
+
+```bash 
+kubectl rollout history deployment kuard
+```
+
+if you want a specific version 
+
+```bash 
+kubectl rollout undo deployments kuard --to-revision=1
+``` 
+
+By default, the complete revision history of a deployment is kept attached to the Deployment object itself. Over time (e.g., years) this history can grow fairly large, so it is recommended that if you have deployments that you expect to keep around for a long time you set a maximum history size for the deployment revision history, to limit the total size of the Deployment object.
+
+To accomplish this, use the revisionHistoryLimit property in the deployment specification
+
+```yaml
+spec:
+ # We do daily rollouts, limit the revision history to two weeks of
+ # releases as we don't expect to roll back beyond that.
+ revisionHistoryLimit: 14
+ ```
