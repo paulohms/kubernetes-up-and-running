@@ -14,7 +14,7 @@ If the Pod fails before a successful termination, the job controller will create
 
 Jobs are designed to manage batch-like workloads where work items are processed by one or more Pods. By default, each job runs a single Pod once until successful termination. This job pattern is defined by two primary attributes of a job, namely the number of job completions and the number of Pods to run in parallel. In the case of the “run once until completion” pattern, the completions and parallelism parameters are set to 1.
 
-![chapter-12.01.png]
+![](chapter-12.01.png)
 
 ### One Shot
 
@@ -94,7 +94,7 @@ Feel free to study the completed jobs and check out their logs to see the finger
 
 A common use case for jobs is to process work from a work queue. In this scenario, some task creates a number of work items and publishes them to a work queue. A worker job can be run to process each work item until the work queue is empty.
 
-![chapter-12.02.png]
+![](chapter-12.02.png)
 
 #### Starting a work queue
 
