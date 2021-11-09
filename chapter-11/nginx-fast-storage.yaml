@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: "DaemonSet"
+metadata:
+  labels:
+    app: nginx
+    ssd: "true"
+  name: nginx-fast-storage
+spec:
+  selector:
+    matchLabels:
+        name: nginx-fast-storage
+  template:
+    metadata:
+      labels:
+        name: nginx-fast-storage
+    spec:
+      nodeSelector:
+        ssd: "true"
+      containers:
+      - name: nginx
+        image: nginx:1.10.0
