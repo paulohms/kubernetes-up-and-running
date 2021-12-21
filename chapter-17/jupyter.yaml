@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: jupyter
+  name: jupyter
+  namespace: jupyter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: jupyter
+  template:
+    metadata:
+      labels:
+        run: jupyter
+    spec:
+      containers:
+      - image: jupyter/scipy-notebook:abdb27a6dfbb
+        name: jupyter
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
