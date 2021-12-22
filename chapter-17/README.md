@@ -45,7 +45,7 @@ spec:
  ```
 
 ```bash
-  kubectl create -f jupyter.yaml
+kubectl create -f jupyter.yaml
 ```
 
 ```bash
@@ -70,8 +70,56 @@ Finally, you can visit http://localhost:8888/?token=<token>, inserting the token
 
 ## Parse
 
+The Parse server is a cloud API dedicated to providing easy-to-use storage for mobile applications. It provides a variety of different client libraries that make it easy to inte‐ grate with Android, iOS, and other mobile platforms. Parse was purchased by Face‐ book in 2013 and subsequently shut down. Fortunately for us, a compatible server was open sourced by the core Parse team and is available for us to use. This section describes how to set up Parse in Kubernetes.
+
 ### requiriments 
 
 ```bash
- kubectl apply -f mongo-simple.yaml
- ```
+kubectl apply -f mongo-config-map.yaml
+```
+```bash
+kubectl apply -f mongo-service.yaml
+```
+```bash
+kubectl apply -f mongo.yaml
+```
+
+ ### Building the parse-server
+
+```bash
+kubectl apply -f parse.yaml
+```
+
+### Testing Parse
+
+To test your deployment, you need to expose it as a Kubernetes service.
+
+```bash
+kubectl apply -f parse-service.yaml
+```
+
+```bash
+kubectl apply -f parse-service.yaml
+```
+
+```bash
+kubectl port-forward ${POD_NAME} 1337:1337
+```
+
+you can test: 
+
+```curl 
+$ curl -X POST \
+-H "X-Parse-Application-Id: APPLICATION_ID" \
+-H "Content-Type: application/json" \
+-d '{"score":1337,"playerName":"Sean Plott","cheatMode":false}' \
+http://localhost:1337/parse/classes/GameScore
+```
+
+```curl
+curl -X GET \
+  -H "X-Parse-Application-Id: APPLICATION_ID" \
+  http://localhost:1337/parse/classes/GameScore/2ntvSpRGIK
+```
+
+

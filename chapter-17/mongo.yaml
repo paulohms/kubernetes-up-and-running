@@ -5,6 +5,9 @@ metadata:
 spec:
   serviceName: "mongo"
   replicas: 3
+  selector:
+    matchLabels:
+      app: mongo
   template:
     metadata:
       labels:
@@ -14,14 +17,14 @@ spec:
       - name: mongodb
         image: mongo:3.4.1
         command:
-          - mongod
-          - --replSet
-          - rs0
+        - mongod
+        - --replSet
+        - rs0
         ports:
         - containerPort: 27017
           name: web
-        # This container initializes the mongodb server, then sleeps.
-        - name: init-mongo
+      # This container initializes the mongodb server, then sleeps.
+      - name: init-mongo
         image: mongo:3.4.1
         command:
         - bash
@@ -29,8 +32,7 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /config
-        volumes:
-        - name: config
-          configMap:
-            name: "mongo-init"
-    
+      volumes:
+      - name: config
+        configMap:
+          name: "mongo-init"
