@@ -235,5 +235,29 @@ kubectl apply -f mysql-configmap.yaml
 kubectl apply -f mysql-service.yaml
 ```
 ```bash
-kubectl apply -f mysql-statefulset.yaml
+kubectl apply -f mysql-statefulset.yaml 
 ```
+
+create database 
+
+```bash
+kubectl exec -it mysql-0 -- mysql -u root -p
+```
+
+```bash
+mysql> create database ghost_db;
+```
+
+Finally, perform a rollout to deploy this new configuration
+
+```bash
+$ kubectl apply -f ghost.yaml
+```
+
+Because your Ghost server is now decoupled from its database, you can scale up your Ghost server and it will continue to share the data across all replicas. Edit ghost.yaml to set spec.replicas to 3, then run
+
+```bash
+kubectl apply -f ghost.yaml
+````
+
+Your Ghost installation is now scaled up to three replicas.
