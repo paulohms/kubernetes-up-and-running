@@ -258,6 +258,6 @@ Because your Ghost server is now decoupled from its database, you can scale up y
 
 ```bash
 kubectl apply -f ghost.yaml
-````
+```
 
 Your Ghost installation is now scaled up to three replicas.
