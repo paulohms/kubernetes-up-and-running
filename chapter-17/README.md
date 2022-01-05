@@ -1,4 +1,4 @@
-# Deploying Real-World Applications1
+# Deploying Real-World Applications
 
 The previous chapters described a variety of API objects that are available in a Kubernetes cluster and ways in which those objects can best be used to construct reliable distributed systems. However, none of the preceding chapters really discussed how you might use the objects in practice to deploy a complete, real-world application. That is the focus of this chapter
 
